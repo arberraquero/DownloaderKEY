@@ -1,0 +1,27 @@
+name: Compilar extension AIX
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Compilar extension MIT App Inventor
+        uses: pavi2410/AIX-Action@main
+        with:
+          source: src
+          output: LogDownloader.aix
+
+      - name: Publicar archivo AIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: LogDownloader-aix
+          path: LogDownloader.aix
+          if-no-files-found: error
