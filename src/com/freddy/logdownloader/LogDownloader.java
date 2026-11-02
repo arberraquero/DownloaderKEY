@@ -73,7 +73,7 @@ public class LogDownloader extends AndroidNonvisibleComponent {
 
       int codigo = conexion.getResponseCode();
       if (codigo < 200 || codigo >= 300) {
-        throw new Exception("Respuesta HTTP " + codigo);
+        throw new Exception(new StringBuilder("Respuesta HTTP ").append(codigo).toString());
       }
 
       String nombre = obtenerNombre(conexion.getHeaderField("Content-Disposition"), direccion);
@@ -170,7 +170,7 @@ public class LogDownloader extends AndroidNonvisibleComponent {
     String candidato = original;
     int n = 1;
     while (existeNombre(resolver, candidato)) {
-      candidato = base + " (" + n++ + ")" + extension;
+      candidato = new StringBuilder(base).append(" (").append(n++).append(")").append(extension).toString();
     }
     return candidato;
   }
@@ -181,9 +181,11 @@ public class LogDownloader extends AndroidNonvisibleComponent {
       cursor = resolver.query(
           MediaStore.Downloads.EXTERNAL_CONTENT_URI,
           new String[]{MediaStore.MediaColumns._ID},
-          MediaStore.MediaColumns.DISPLAY_NAME + "=? AND " +
-              MediaStore.MediaColumns.RELATIVE_PATH + "=?",
-          new String[]{nombre, Environment.DIRECTORY_DOWNLOADS + "/"},
+          new StringBuilder(MediaStore.MediaColumns.DISPLAY_NAME)
+              .append("=? AND ")
+              .append(MediaStore.MediaColumns.RELATIVE_PATH)
+              .append("=?").toString(),
+          new String[]{nombre, new StringBuilder(Environment.DIRECTORY_DOWNLOADS).append("/").toString()},
           null);
       return cursor != null && cursor.moveToFirst();
     } catch (Exception e) {
