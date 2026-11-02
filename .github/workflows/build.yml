@@ -1,4 +1,5 @@
-name: Compilar extension AIX
+
+name: Compilar LogDownloader AIX
 
 on:
   push:
@@ -9,19 +10,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Compilar extension MIT App Inventor
+      - name: Compilar extension
+        id: build
         uses: pavi2410/AIX-Action@main
         with:
-          source: src
-          output: LogDownloader.aix
+          source-dir: src
+          package-name: com.freddy.logdownloader
 
-      - name: Publicar archivo AIX
+      - name: Guardar archivo AIX
         uses: actions/upload-artifact@v4
         with:
-          name: LogDownloader-aix
-          path: LogDownloader.aix
+          name: LogDownloader-AIX
+          path: ${{ steps.build.outputs.extension-path }}
           if-no-files-found: error
