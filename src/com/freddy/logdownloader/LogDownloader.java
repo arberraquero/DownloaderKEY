@@ -50,7 +50,13 @@ public class LogDownloader extends AndroidNonvisibleComponent {
       ErrorDescarga("La dirección está vacía.");
       return;
     }
-    new Thread(() -> descargarEnSegundoPlano(direccion.trim())).start();
+    final String url = direccion.trim();
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        descargarEnSegundoPlano(url);
+      }
+    }).start();
   }
 
   private void descargarEnSegundoPlano(String direccion) {
@@ -107,13 +113,23 @@ public class LogDownloader extends AndroidNonvisibleComponent {
       resolver.update(destino, finalizado, null, null);
 
       final String nombreFinal = nombre;
-      form.runOnUiThread(() -> DescargaCompletada(nombreFinal));
+      form.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          DescargaCompletada(nombreFinal);
+        }
+      });
     } catch (Exception e) {
       if (destino != null) {
         try { context.getContentResolver().delete(destino, null, null); } catch (Exception ignorado) {}
       }
       final String error = e.getMessage() == null ? e.toString() : e.getMessage();
-      form.runOnUiThread(() -> ErrorDescarga(error));
+      form.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          ErrorDescarga(error);
+        }
+      });
     } finally {
       if (conexion != null) conexion.disconnect();
     }
